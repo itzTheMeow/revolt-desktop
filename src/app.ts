@@ -37,7 +37,11 @@ contextBridge.exposeInMainWorld("native", {
     close: () => ipcRenderer.send("close"),
     reload: () => ipcRenderer.send("reload"),
     relaunch: () => ipcRenderer.send("relaunch"),
-    isMaximized: () => ipcRenderer.send("testmax"),
+    isMaximized: () =>
+        new Promise((resolve) => {
+            ipcRenderer.send("testmax");
+            ipcRenderer.on("maxres", (_, arg) => resolve(arg));
+        }),
 
     getConfig: () => config,
     set: (k: string, v: any) => config.set(k, v),

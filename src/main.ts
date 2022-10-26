@@ -9,6 +9,7 @@ import {
     Tray,
     Menu,
     MenuItem,
+    ipcRenderer,
 } from "electron";
 import { execFile } from "child_process";
 import windowStateKeeper from "electron-window-state";
@@ -198,7 +199,9 @@ function createWindow() {
             ? mainWindow.unmaximize()
             : mainWindow.maximize(),
     );
-    ipcMain.on("testmax", () => mainWindow.isMaximized());
+    ipcMain.on("testmax", () =>
+        mainWindow.webContents.send("maxres", mainWindow.isMaximized()),
+    );
 
     ipcMain.on("close", () => mainWindow.close());
 
