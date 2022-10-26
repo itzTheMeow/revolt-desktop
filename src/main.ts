@@ -198,6 +198,7 @@ function createWindow() {
             ? mainWindow.unmaximize()
             : mainWindow.maximize(),
     );
+    ipcMain.on("testmax", () => mainWindow.isMaximized());
 
     ipcMain.on("close", () => mainWindow.close());
 
@@ -326,10 +327,31 @@ App.on("web-contents-created", (_, contents) => {
     });
 
     contents.setWindowOpenHandler(({ url }) => {
+        let cancel = false;
         if (
-            url.startsWith("http:") ||
-            url.startsWith("https:") ||
-            url.startsWith("mailto:")
+            (url.startsWith("http:") || url.startsWith("https:")) &&
+            getConfig().customOpener
+        ) {
+            try {
+                const d = JSON.parse(getConfig().customOpener) as {
+                    file: string;
+                    args: string[];
+                };
+                require("child_process").spawn(
+                    d.file,
+                    d.args.map((a) => a.replace(/\{\$\}/g, url)),
+                    {
+                        detached: true,
+                    },
+                );
+                cancel = true;
+            } catch {}
+        }
+        if (
+            !cancel &&
+            (url.startsWith("http:") ||
+                url.startsWith("https:") ||
+                url.startsWith("mailto:"))
         ) {
             setImmediate(() => {
                 shell.openExternal(url);

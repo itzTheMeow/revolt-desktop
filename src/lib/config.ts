@@ -28,6 +28,7 @@ export function getConfig(): ConfigData {
         discordRPC: false,
         minimiseToTray: true,
         hardwareAcceleration: true,
+        customOpener: "",
     };
 
     return Object.assign({} as any, defaults, store.get("config"));

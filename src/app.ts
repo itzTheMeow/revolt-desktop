@@ -13,6 +13,7 @@ class Config {
     discordRPC: boolean = true;
     minimiseToTray: boolean = true;
     hardwareAcceleration: boolean = true;
+    customOpener = "";
 
     apply(data: Partial<ConfigData>) {
         Object.assign(this, data);
@@ -36,6 +37,7 @@ contextBridge.exposeInMainWorld("native", {
     close: () => ipcRenderer.send("close"),
     reload: () => ipcRenderer.send("reload"),
     relaunch: () => ipcRenderer.send("relaunch"),
+    isMaximized: () => ipcRenderer.send("testmax"),
 
     getConfig: () => config,
     set: (k: string, v: any) => config.set(k, v),
